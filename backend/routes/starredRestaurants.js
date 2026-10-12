@@ -81,13 +81,41 @@ router.get("/:id", (req, res) => {
  * Feature 8: Adding to your list of starred restaurants.
  */
 // Method/URL: POST /restaurants/starred
-// 1. Get the restaurant id from req.body
-// 2. Find the restaurant in ALL_RESTAURANTS with that id
-// 3. If it isn't found, send a 404 and stop
-// 4. Create a new id with uuidv4()
-// 5. Build the new starred item: { id: newId, restaurantId: id, comment: null }
-// 6. Add it to STARRED_RESTAURANTS (push)
-// 7. Send back { id, comment, name } for the new item (res.json sends the 200)
+router.post("/", (req, res) => {
+  // 1. Get the restaurant id from req.body
+  const { id } = req.body; // destructuring - shorthand for const id = req.body.id;
+
+  // 2. Find the restaurant in ALL_RESTAURANTS with that id
+  const restaurant = ALL_RESTAURANTS.find( // find goes through the array and returns the first item where the check is true, if nothing is found it returns undefined
+    (restaurant) => restaurant.id === id
+  );
+  
+  // 3. If it isn't found, send a 404 and stop
+  if (!restaurant) { // !undefined is true so this runs when nothing was found (undefined is falsey so if just undefined was there the error handling code wouldn't run)
+    res.sendStatus(404);
+    return; // stops the function
+  }
+
+  // 4. Create a new id with uuidv4()
+  const newId = uuidv4(); // Generate a unique ID for the newly starred restaurant.
+
+  // 5. Build the new starred item: { id: newId, restaurantId: id, comment: null }
+  const starredRestaurant = {
+    id: newId,
+    restaurantId: id, 
+    comment: null
+  };
+  
+  // 6. Add it to STARRED_RESTAURANTS (push)
+  STARRED_RESTAURANTS.push(starredRestaurant); // add the new object to the STARRED_RESTAURANTS array
+
+  // 7. Send back { id, comment, name } for the new item (res.json sends the 200)
+  res.json({ // send the json object to the frontend 
+    id: starredRestaurant.id,
+    comment: starredRestaurant.comment,
+    name: restaurant.name,
+  });
+});
 
 /**
  * Feature 9: Deleting from your list of starred restaurants.
