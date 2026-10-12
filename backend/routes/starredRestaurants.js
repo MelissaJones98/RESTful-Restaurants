@@ -49,11 +49,33 @@ router.get("/", (req, res) => {
  * Feature 7: Getting a specific starred restaurant.
  */
 // Method/URL: GET /restaurants/starred/:id
-// 1. Get the id from the URL (req.params)
-// 2. Find the starred restaurant in STARRED_RESTAURANTS with that id
-// 3. If it isn't found, send a 404 and stop
-// 4. Use its restaurantId to find the matching restaurant in ALL_RESTAURANTS (to get the name)
-// 5. Send back { id, comment, name } (res.json sends a 200 automatically)
+router.get("/:id", (req, res) => {
+  // 1. Get the id from the URL (req.params)
+  const { id } = req.params; // destructuring - shorthand for const id = req.params.id;
+
+  // 2. Find the starred restaurant in STARRED_RESTAURANTS with that id
+  const starredRestaurant = STARRED_RESTAURANTS.find( // find goes through the array and returns the first item where the check is true, if nothing is found it returns undefined
+    (starredRestaurant) => starredRestaurant.id === id
+  );
+
+  // 3. If it isn't found, send a 404 and stop
+  if (!starredRestaurant) { // !undefined is true so this runs when nothing was found (undefined is falsey so if just undefined was there the error handling code wouldn't run)
+    res.sendStatus(404);
+    return; // stops the function - otherwise the code would continue and crash on starredRestaurant.restaurantId
+  }
+
+  // 4. Use its restaurantId to find the matching restaurant in ALL_RESTAURANTS (to get the name)
+  const restaurant = ALL_RESTAURANTS.find(
+    (restaurant) => restaurant.id === starredRestaurant.restaurantId
+  );
+
+  // 5. Send back { id, comment, name } (res.json sends a 200 automatically)
+  res.json({ // send the json object to the frontend 
+    id: starredRestaurant.id,
+    comment: starredRestaurant.comment,
+    name: restaurant.name,
+  });
+});
 
 /**
  * Feature 8: Adding to your list of starred restaurants.
