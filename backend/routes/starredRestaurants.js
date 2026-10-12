@@ -105,7 +105,7 @@ router.post("/", (req, res) => {
     restaurantId: id, 
     comment: null
   };
-  
+
   // 6. Add it to STARRED_RESTAURANTS (push)
   STARRED_RESTAURANTS.push(starredRestaurant); // add the new object to the STARRED_RESTAURANTS array
 
@@ -121,12 +121,29 @@ router.post("/", (req, res) => {
  * Feature 9: Deleting from your list of starred restaurants.
  */
 // Method/URL: DELETE /restaurants/starred/:id
-// 1. Get the id from the URL (req.params)
-// 2. Make a new list that leaves out the starred restaurant with that id
-// 3. If the new list is the same length as the old one, nothing was removed
-//    -> send 404 and stop
-// 4. Replace STARRED_RESTAURANTS with the new list
-// 5. Send 200 so the frontend knows it worked
+router.delete("/:id", (req, res) => {
+  // 1. Get the id from the URL (req.params)
+  const { id } = req.params;  // destructuring - shorthand for const id = req.params.id;
+
+  // 2. Make a new list that leaves out the starred restaurant with that id
+  const newListOfRestaurants = STARRED_RESTAURANTS.filter( // filter goes through an array and creates a new array with the items that meets the required condition
+    (restaurant) => restaurant.id !== id
+  );
+
+  // 3. If the new list is the same length as the old one, nothing was removed
+  //    -> send 404 and stop
+  // The user tried to delete a restaurant that doesn't exist.
+  if (ALL_RESTAURANTS.length === newListOfRestaurants.length) {
+    res.sendStatus(404);
+    return;
+  }
+
+  // 4. Replace STARRED_RESTAURANTS with the new list
+  STARRED_RESTAURANTS = newListOfRestaurants;
+
+  // 5. Send 200 so the frontend knows it worked
+  res.sendStatus(200);
+});
 
 /**
  * Feature 10: Updating your comment of a starred restaurant.
