@@ -126,20 +126,20 @@ router.delete("/:id", (req, res) => {
   const { id } = req.params;  // destructuring - shorthand for const id = req.params.id;
 
   // 2. Make a new list that leaves out the starred restaurant with that id
-  const newListOfRestaurants = STARRED_RESTAURANTS.filter( // filter goes through an array and creates a new array with the items that meets the required condition
-    (restaurant) => restaurant.id !== id
+  const newListOfStarredRestaurants = STARRED_RESTAURANTS.filter( // filter goes through an array and creates a new array with the items that meets the required condition
+    (starredRestaurant) => starredRestaurant.id !== id
   );
 
   // 3. If the new list is the same length as the old one, nothing was removed
   //    -> send 404 and stop
   // The user tried to delete a restaurant that doesn't exist.
-  if (ALL_RESTAURANTS.length === newListOfRestaurants.length) {
+  if (STARRED_RESTAURANTS.length === newListOfStarredRestaurants.length) {
     res.sendStatus(404);
     return;
   }
 
   // 4. Replace STARRED_RESTAURANTS with the new list
-  STARRED_RESTAURANTS = newListOfRestaurants;
+  STARRED_RESTAURANTS = newListOfStarredRestaurants;
 
   // 5. Send 200 so the frontend knows it worked
   res.sendStatus(200);
