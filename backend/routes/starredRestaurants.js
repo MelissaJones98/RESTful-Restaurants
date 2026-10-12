@@ -149,10 +149,27 @@ router.delete("/:id", (req, res) => {
  * Feature 10: Updating your comment of a starred restaurant.
  */
 // Method/URL: PUT /restaurants/starred/:id
-// 1. Get the id from req.params and newComment from req.body
-// 2. Find the starred restaurant in STARRED_RESTAURANTS with that id
-// 3. If it isn't found, send a 404 and stop
-// 4. Set its comment to newComment
-// 5. Send a 200
+router.put("/:id", (req, res) => {
+  // 1. Get the id from req.params and newComment from req.body
+  const { id } = req.params;  // destructuring - shorthand for const id = req.params.id;
+  const { newComment } = req.body; // destructuring - shorthand for const newComment = req.body.newComment;
+
+  // 2. Find the starred restaurant in STARRED_RESTAURANTS with that id
+  const starredRestaurant = STARRED_RESTAURANTS.find( // find goes through the array and returns the first item where the check is true, if nothing is found it returns undefined
+    (starredRestaurant) => starredRestaurant.id === id
+  );
+
+  // 3. If it isn't found, send a 404 and stop
+  if (!starredRestaurant) { // !undefined is true so this runs when nothing was found (undefined is falsey so if just undefined was there the error handling code wouldn't run)
+    res.sendStatus(404);
+    return; // stops the function
+  }
+
+  // 4. Set its comment to newComment
+  starredRestaurant.comment = newComment;
+
+  // 5. Send a 200
+  res.sendStatus(200);
+});
 
 module.exports = router;
